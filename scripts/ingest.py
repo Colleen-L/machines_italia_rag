@@ -101,22 +101,47 @@ def extract_dates(text: str) -> list[str]:
 
     return sorted(found)
 
+def date_to_timestamp(date_string: str) -> int:
+    """Convert YYYY-MM-DD to Unix timestamp in milliseconds."""
+    date = dt.datetime.strptime(date_string, "%Y-%m-%d")
+    date = date.replace(tzinfo=dt.timezone.utc)
+    return int(date.timestamp() * 1000)
+
+def extract_location_city(text: str) -> str | None:
+    """Extract a city from common event-page location patterns."""
+    patterns = [
+        r"(?:location|venue|city)\s*[:\-]\s*([A-Za-zÀ-ÿ' -]{2,50})",
+        r"(?:held in|takes place in|located in)\s+([A-Za-zÀ-ÿ' -]{2,50})",
+    ]
+    for pattern in patterns:
+        match = re.search(pattern, text, re.IGNORECASE)
+        if match:
+            city = match.group(1).strip()
+            # Avoid capturing excessively long text.
+            if len(city) <= 50:
+                return city
+    return None
 
 def build_metadata(url: str, title: str, markdown: str) -> dict:
     content_type = classify_content_type(url)
     dates = extract_dates(markdown)
+
     metadata = {
         "url": url,
         "title": title,
         "content_type": content_type,
         "language": "en",
-        "scraped_at": dt.datetime.utcnow().isoformat() + "Z",
+        "scraped_at": dt.datetime.now(dt.timezone.utc).isoformat(),
     }
+
     if content_type == "event" and dates:
-        metadata["event_start_date"] = dates[0]
-        metadata["event_end_date"] = dates[-1]
+        metadata["event_start_date"] = date_to_timestamp(dates[0])
+        metadata["event_end_date"] = date_to_timestamp(dates[-1])
+        location_city = extract_location_city(markdown)
+        if location_city:
+            metadata["location_city"] = location_city
     elif content_type == "news" and dates:
-        metadata["published_date"] = dates[0]
+        metadata["published_date"] = date_to_timestamp(dates[0])
 
     return metadata
 
@@ -198,7 +223,7 @@ def ingest_url(url: str):
         vector = embed(chunk)
         chunk_metadata = dict(metadata)
         chunk_metadata["chunk_index"] = i
-        chunk_metadata["text"] = chunk[:1000]  # store a preview; keep full text elsewhere if needed
+        chunk_metadata["text"] = chunk
         vectors.append({
             "id": f"{metadata['content_type']}:{slug}:{i}",
             "values": vector,
