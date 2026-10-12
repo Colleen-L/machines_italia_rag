@@ -3,21 +3,22 @@
 Machines Italia URL discovery + content change detection.
 
 Outputs:
-
     data/discovered_urls.txt
-        All currently discovered Machines Italia URLs.
-
+        All URLs currently discovered.
     data/changed_urls.txt
-        URLs that are new or whose page content has changed.
-
+        URLs that are new or whose page content changed.
+    data/deleted_urls.txt
+        URLs that were previously discovered but are no longer discovered.
     data/page_hashes.json
-        SHA-256 content hash for each successfully fetched page.
+        SHA-256 hash of the latest successfully fetched page content.
 """
+
 import hashlib
 import json
 import sys
 import time
 from pathlib import Path
+
 import requests
 from bs4 import BeautifulSoup
 
@@ -42,34 +43,84 @@ SEED_PAGES = [
 HASH_FILE = Path("data/page_hashes.json")
 URL_FILE = Path("data/discovered_urls.txt")
 CHANGED_FILE = Path("data/changed_urls.txt")
+DELETED_FILE = Path("data/deleted_urls.txt")
+
+REQUEST_TIMEOUT = 20
+
+SEED_DELAY = 1.0
+PAGE_DELAY = 0.5
+
+def fetch_page(url: str) -> requests.Response:
+    """
+    Fetch a page with a consistent user agent and timeout.
+    """
+    response = requests.get(
+        url,
+        headers=HEADERS,
+        timeout=REQUEST_TIMEOUT,
+    )
+    response.raise_for_status()
+    return response
 
 def find_links(html: str) -> set[str]:
     """
-    Find Machines Italia event and news article URLs.
+    Extract Machines Italia event and news URLs.
     """
     soup = BeautifulSoup(html, "html.parser")
+
     found = set()
+
     for a in soup.find_all("a", href=True):
+
         href = a["href"].strip()
-        # Convert relative URLs to absolute URLs
+
+        # Convert relative URLs to absolute
         if href.startswith("/"):
             href = BASE + href
-        # Individual event pages
+
+        # Only keep supported content types
         if href.startswith(BASE + "/event/"):
             found.add(href)
-        # Individual news pages
         elif href.startswith(BASE + "/news-article/"):
             found.add(href)
     return found
 
+
+def discover_urls() -> set[str]:
+    all_urls = set()
+    failed_seeds = []
+    for path in SEED_PAGES:
+        url = BASE + path
+        print(f"Checking seed page: {url}",file=sys.stderr,flush=True,)
+
+        try:
+            response = fetch_page(url)
+            links = find_links(response.text)
+            print(f"  Found {len(links)} content links",file=sys.stderr,flush=True,)
+            all_urls.update(links)
+        except Exception as exc:
+            print(f"{exc}", file=sys.stderr,flush=True,)
+            failed_seeds.append(url)
+        time.sleep(SEED_DELAY)
+
+    if failed_seeds:
+        print("",file=sys.stderr,)
+        print("One or more discovery seed pages failed.",file=sys.stderr,)
+        for url in failed_seeds:
+            print(f"  Failed seed: {url}",file=sys.stderr,)
+        sys.exit(1)
+    print("",file=sys.stderr,)
+    print(f"Discovered {len(all_urls)} unique URLs.",file=sys.stderr,)
+    return all_urls
+
 def clean_content(html: str) -> str:
     """
-    Remove non-content HTML before calculating the hash.
-
-    Prevents changes to scripts/styles/navigation
-    from incorrectly triggering re-ingestion.
+    Convert HTML into normalized text
     """
-    soup = BeautifulSoup(html, "html.parser")
+    soup = BeautifulSoup(
+        html,
+        "html.parser",
+    )
     for element in soup([
         "script",
         "style",
@@ -77,105 +128,101 @@ def clean_content(html: str) -> str:
         "svg",
     ]):
         element.decompose()
-    text = soup.get_text(" ", strip=True)
+    text = soup.get_text(" ",strip=True,)
+    # Normalize whitespace
     text = " ".join(text.split())
     return text
 
 def calculate_hash(content: str) -> str:
+    """
+    Calculate SHA-256 hash
+    """
     return hashlib.sha256(
         content.encode("utf-8")
     ).hexdigest()
 
-
 def load_previous_hashes() -> dict[str, str]:
     """
-    Load hashes from the previous discovery run.
+    Load URL -> content hash mapping
     """
     if not HASH_FILE.exists():
         return {}
     try:
         with HASH_FILE.open(
             "r",
-            encoding="utf-8"
-        ) as f:
-            data = json.load(f)
-            if isinstance(data, dict):
-                return data
-    except Exception as e:
+            encoding="utf-8",
+        ) as file:
+            data = json.load(file)
+        if isinstance(data, dict):
+            return data
+    except Exception as exc:
         print(
-            f"Warning: could not read {HASH_FILE}: {e}",
+            f"Could not read {HASH_FILE}: {exc}",
             file=sys.stderr,
         )
     return {}
 
 
-def main():
-    # discover URLs
-    all_urls = set()
-    for path in SEED_PAGES:
-        url = BASE + path
-        try:
-            response = requests.get(
-                url,
-                headers=HEADERS,
-                timeout=20,
-            )
-            if response.status_code != 200:
-                print(
-                    f"(skip {url}: "
-                    f"status {response.status_code})",
-                    file=sys.stderr,
-                    flush=True,
-                )
-                continue
-            links = find_links(response.text)
-            print(
-                f"{url} -> {len(links)} links",
-                file=sys.stderr,
-                flush=True,
-            )
-            all_urls.update(links)
-        except Exception as e:
-            print(
-                f"(error on {url}: {e})",
-                file=sys.stderr,
-                flush=True,
-            )
-        time.sleep(1)
-    print(
-        f"Discovered {len(all_urls)} unique URLs",
-        file=sys.stderr,
+def load_previous_urls() -> set[str]:
+    """
+    Load the URL list from the previous successful discovery
+    """
+    if not URL_FILE.exists():
+        return set()
+    urls = set()
+    with URL_FILE.open(
+        "r",
+        encoding="utf-8",
+    ) as file:
+        for line in file:
+            url = line.strip()
+            if url:
+                urls.add(url)
+    return urls
+
+def write_url_file(
+    path: Path,
+    urls: set[str] | list[str],
+) -> None:
+    """
+    Write sorted URLs, one per line
+    """
+    sorted_urls = sorted(urls)
+    if sorted_urls:
+        content = "\n".join(sorted_urls) + "\n"
+    else:
+        content = ""
+    path.write_text(
+        content,
+        encoding="utf-8",
     )
 
-    # load prev hashes
+def main():
+    current_urls = discover_urls()
+    previous_urls = load_previous_urls()
     previous_hashes = load_previous_hashes()
-    current_hashes = {}
-    changed_urls = []
 
-    # fetch every page and compare content
+    print("",file=sys.stderr,)
+    print(f"Previous URL count: {len(previous_urls)}",file=sys.stderr,)
+    print(f"Current URL count:  {len(current_urls)}",file=sys.stderr,)
+
+    deleted_urls = previous_urls - current_urls
+    changed_urls = []
+    current_hashes = {}
+    sorted_current_urls = sorted(current_urls)
+
+    print("",file=sys.stderr,)
+    print("Checking page content...",file=sys.stderr,)
+
     for index, url in enumerate(
-        sorted(all_urls),
+        sorted_current_urls,
         start=1,
     ):
-        print(
-            f"[{index}/{len(all_urls)}] "
-            f"Checking {url}",
-            file=sys.stderr,
-            flush=True,
-        )
+
+        print(f"[{index}/{len(sorted_current_urls)}] {url}",file=sys.stderr,flush=True,)
+
         try:
-            response = requests.get(
-                url,
-                headers=HEADERS,
-                timeout=20,
-            )
-            if response.status_code != 200:
-                print(
-                    f"  skipped: HTTP "
-                    f"{response.status_code}",
-                    file=sys.stderr,
-                )
-                continue
+            response = fetch_page(url)
             content = clean_content(
                 response.text
             )
@@ -184,50 +231,40 @@ def main():
             )
             current_hashes[url] = new_hash
             old_hash = previous_hashes.get(url)
-            # new page discovered
             if old_hash is None:
                 changed_urls.append(url)
                 print(
-                    "  NEW PAGE",
+                    "  -> NEW",
                     file=sys.stderr,
                 )
-            # existing page with new content
             elif old_hash != new_hash:
                 changed_urls.append(url)
-                print(
-                    "  CONTENT CHANGED",
-                    file=sys.stderr,
-                )
-            # page unchanged
+                print("  -> CONTENT CHANGED",file=sys.stderr,)
             else:
-                print(
-                    "  unchanged",
-                    file=sys.stderr,
-                )
-        except Exception as e:
-            print(
-                f"  error: {e}",
-                file=sys.stderr,
-            )
+                print("  -> unchanged",file=sys.stderr,)
+        except Exception as exc:
+            print(f"  -> ERROR: {exc}",file=sys.stderr,)
+            if url in previous_hashes:
+                current_hashes[url] = previous_hashes[url]
 
-        time.sleep(0.5)
+        time.sleep(PAGE_DELAY)
 
-    # save discovered URLs
-    URL_FILE.write_text(
-        "\n".join(sorted(all_urls)) + "\n",
-        encoding="utf-8",
+    # write current
+    write_url_file(
+        URL_FILE,
+        current_urls,
     )
-    CHANGED_FILE.write_text(
-        "\n".join(sorted(changed_urls))
-        + (
-            "\n"
-            if changed_urls
-            else ""
-        ),
-        encoding="utf-8",
+    # write changed
+    write_url_file(
+        CHANGED_FILE,
+        changed_urls,
     )
-
-    # save curr hashes
+    # write deleted
+    write_url_file(
+        DELETED_FILE,
+        deleted_urls,
+    )
+    # write hashes
     HASH_FILE.write_text(
         json.dumps(
             current_hashes,
@@ -237,16 +274,24 @@ def main():
         encoding="utf-8",
     )
 
-    # summary
-    unchanged_count = (
-        len(all_urls)
-        - len(changed_urls)
-    )
+    unchanged_count = (len(current_urls) - len(changed_urls))
     print("Discovery summary", file=sys.stderr,)
+    print("---"file=sys.stderr,)
+    print(f"Current URLs:       {len(current_urls)}",file=sys.stderr,)
+    print(f"New/changed URLs:   {len(changed_urls)}",file=sys.stderr,)
+    print(f"Deleted URLs:       {len(deleted_urls)}",file=sys.stderr,)
+    print(f"Unchanged URLs:     {unchanged_count}",file=sys.stderr,)
     print("---",file=sys.stderr,)
-    print(f"Total URLs: {len(all_urls)}",file=sys.stderr,)
-    print(f"New/changed: {len(changed_urls)}",file=sys.stderr,)
-    print(f"Unchanged: {unchanged_count}",file=sys.stderr,)
+    if deleted_urls:
+        print("",file=sys.stderr,)
+        print("Deleted URLs:",file=sys.stderr,)
+        for url in sorted(deleted_urls):
+            print(f"  {url}",file=sys.stderr,)
+    if changed_urls:
+        print("",file=sys.stderr,)
+        print("New/changed URLs:",file=sys.stderr,)
+        for url in sorted(changed_urls):
+            print(f"  {url}",file=sys.stderr,)
 
 if __name__ == "__main__":
     main()

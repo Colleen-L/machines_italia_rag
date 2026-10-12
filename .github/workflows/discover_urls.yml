@@ -7,6 +7,7 @@ on:
     paths-ignore:
       - "data/discovered_urls.txt"
       - "data/changed_urls.txt"
+      - "data/deleted_urls.txt"
       - "data/page_hashes.json"
 
   schedule:
@@ -38,36 +39,45 @@ jobs:
         run: |
           python data/discover_urls.py
 
+      - name: Show discovery results
+        run: |
+          echo "Discovery results"
+
           echo ""
-          echo "================================"
-          echo "Discovered URLs"
-          echo "================================"
+          echo "Discovered URLs:"
           wc -l data/discovered_urls.txt
 
           echo ""
-          echo "================================"
-          echo "Changed/New URLs"
-          echo "================================"
+          echo "New / changed URLs:"
           wc -l data/changed_urls.txt
+
+          echo ""
+          echo "Deleted URLs:"
+          wc -l data/deleted_urls.txt
 
           echo ""
           echo "Changed URLs:"
           cat data/changed_urls.txt || true
 
-      - name: Check for changes
+          echo ""
+          echo "Deleted URLs:"
+          cat data/deleted_urls.txt || true
+
+      - name: Check for state changes
         id: changes
         run: |
           git add \
             data/discovered_urls.txt \
             data/changed_urls.txt \
+            data/deleted_urls.txt \
             data/page_hashes.json
 
           if git diff --cached --quiet; then
             echo "changed=false" >> "$GITHUB_OUTPUT"
-            echo "No discovery/content changes"
+            echo "No discovery or content changes detected."
           else
             echo "changed=true" >> "$GITHUB_OUTPUT"
-            echo "Discovery/content changes detected"
+            echo "Discovery or content changes detected."
           fi
 
       - name: Commit discovery state
@@ -76,28 +86,30 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-          git commit \
-            -m "chore: update Machines Italia content state"
-
+          git commit -m "chore: update Machines Italia content state"
           git push
 
-      # - name: Trigger n8n ingestion
-      #   if: steps.changes.outputs.changed == 'true'
-      #   env:
-      #     N8N_INGEST_WEBHOOK_URL: ${{ secrets.N8N_INGEST_WEBHOOK_URL }}
-      #   run: |
-      #     if [ -z "$N8N_INGEST_WEBHOOK_URL" ]; then
-      #       echo "ERROR: N8N_INGEST_WEBHOOK_URL secret is not configured"
-      #       exit 1
-      #     fi
+      - name: Trigger n8n ingestion
+        if: steps.changes.outputs.changed == 'true'
+        env:
+          N8N_INGEST_WEBHOOK_URL: ${{ secrets.N8N_INGEST_WEBHOOK_URL }}
+        run: |
+          if [ -z "$N8N_INGEST_WEBHOOK_URL" ]; then
+            echo "ERROR: N8N_INGEST_WEBHOOK_URL is not configured."
+            exit 1
+          fi
 
-      #     echo "Triggering n8n ingestion..."
+          echo "Waiting briefly for GitHub raw content to update..."
+          sleep 5
 
-      #     curl --fail-with-body \
-      #       --retry 3 \
-      #       --retry-delay 5 \
-      #       -X POST \
-      #       "$N8N_INGEST_WEBHOOK_URL"
+          echo "Triggering n8n ingestion..."
 
-      #     echo ""
-      #     echo "n8n ingestion triggered successfully."
+          curl --fail-with-body \
+            --retry 3 \
+            --retry-delay 5 \
+            --retry-all-errors \
+            -X POST \
+            "$N8N_INGEST_WEBHOOK_URL"
+
+          echo ""
+          echo "n8n ingestion triggered successfully."
