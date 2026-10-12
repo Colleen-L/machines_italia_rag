@@ -4,16 +4,21 @@ on:
   push:
     branches:
       - main
+    paths-ignore:
+      - "data/discovered_urls.txt"
+      - "data/changed_urls.txt"
+      - "data/page_hashes.json"
 
   schedule:
     - cron: "0 6 * * *"
 
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   discover:
-    # don't run again when the workflow itself pushes discovered_urls.txt
-    if: github.actor != 'github-actions[bot]'
     runs-on: ubuntu-latest
 
     steps:
@@ -29,41 +34,70 @@ jobs:
         run: |
           pip install requests beautifulsoup4
 
-      - name: Discover URLs
+      - name: Discover URLs and detect changes
         run: |
-          python data/discover_urls.py > data/discovered_urls.txt
+          python data/discover_urls.py
 
-          echo "Discovered URL count:"
+          echo ""
+          echo "================================"
+          echo "Discovered URLs"
+          echo "================================"
           wc -l data/discovered_urls.txt
+
+          echo ""
+          echo "================================"
+          echo "Changed/New URLs"
+          echo "================================"
+          wc -l data/changed_urls.txt
+
+          echo ""
+          echo "Changed URLs:"
+          cat data/changed_urls.txt || true
 
       - name: Check for changes
         id: changes
         run: |
-          if git diff --quiet -- data/discovered_urls.txt; then
+          git add \
+            data/discovered_urls.txt \
+            data/changed_urls.txt \
+            data/page_hashes.json
+
+          if git diff --cached --quiet; then
             echo "changed=false" >> "$GITHUB_OUTPUT"
-            echo "No changes to discovered URLs"
+            echo "No discovery/content changes"
           else
             echo "changed=true" >> "$GITHUB_OUTPUT"
-            echo "discovered_urls.txt changed"
+            echo "Discovery/content changes detected"
           fi
 
-      - name: Commit discovered URLs
+      - name: Commit discovery state
         if: steps.changes.outputs.changed == 'true'
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-          git add data/discovered_urls.txt
-          git commit -m "chore: update discovered URLs"
+          git commit \
+            -m "chore: update Machines Italia content state"
+
           git push
 
-      - name: Trigger n8n ingestion
-        if: steps.changes.outputs.changed == 'true'
-        env:
-          N8N_INGEST_WEBHOOK_URL: ${{ secrets.N8N_INGEST_WEBHOOK_URL }}
-        run: |
-          echo "Triggering n8n ingestion..."
+      # - name: Trigger n8n ingestion
+      #   if: steps.changes.outputs.changed == 'true'
+      #   env:
+      #     N8N_INGEST_WEBHOOK_URL: ${{ secrets.N8N_INGEST_WEBHOOK_URL }}
+      #   run: |
+      #     if [ -z "$N8N_INGEST_WEBHOOK_URL" ]; then
+      #       echo "ERROR: N8N_INGEST_WEBHOOK_URL secret is not configured"
+      #       exit 1
+      #     fi
 
-          curl --fail-with-body \
-            -X POST \
-            "$N8N_INGEST_WEBHOOK_URL"
+      #     echo "Triggering n8n ingestion..."
+
+      #     curl --fail-with-body \
+      #       --retry 3 \
+      #       --retry-delay 5 \
+      #       -X POST \
+      #       "$N8N_INGEST_WEBHOOK_URL"
+
+      #     echo ""
+      #     echo "n8n ingestion triggered successfully."
