@@ -27,7 +27,6 @@ https://machinesitalia.org/event/canadian-concrete-expo-2025
 https://machinesitalia.org/event/canadian-manufacturing-technology-show-cmts-2025
 https://machinesitalia.org/event/castexpo-metalcasting-congress-2025
 https://machinesitalia.org/event/cersaie-2025-international-exhibition-ceramic-tile-and-bathroom-furnishings
-https://machinesitalia.org/event/collision-2024-italys-high-tech-back-collision
 https://machinesitalia.org/event/conexpo-conagg-2026
 https://machinesitalia.org/event/coverings-2025
 https://machinesitalia.org/event/coverings-2026
@@ -46,7 +45,6 @@ https://machinesitalia.org/event/expo-cihac-2024
 https://machinesitalia.org/event/expo-cihac-2026
 https://machinesitalia.org/event/expo-manufactura
 https://machinesitalia.org/event/expo-pack-guadalajara
-https://machinesitalia.org/event/expo-pack-mexico-2024
 https://machinesitalia.org/event/expo-pack-mexico-2026
 https://machinesitalia.org/event/export-days-anima-2025
 https://machinesitalia.org/event/fabtech-expo-2024
@@ -73,7 +71,6 @@ https://machinesitalia.org/event/international-mechanical-engineering-congress-e
 https://machinesitalia.org/event/ipack-ima-2025
 https://machinesitalia.org/event/ipack-ima-2028
 https://machinesitalia.org/event/italy-and-sardegna-web-summit-vancouver-2025
-https://machinesitalia.org/event/italy-web-summit-vancouver-2025
 https://machinesitalia.org/event/ivt-expo-highway-vehicle-technology-2024
 https://machinesitalia.org/event/iwf-international-woodworking-fair-2026
 https://machinesitalia.org/event/join-us-italian-night-imts-2026
@@ -82,8 +79,6 @@ https://machinesitalia.org/event/macfrut-2025
 https://machinesitalia.org/event/marmomac-2024
 https://machinesitalia.org/event/marmomac-2025
 https://machinesitalia.org/event/marmomac-2026
-https://machinesitalia.org/event/meat-tech-2024
-https://machinesitalia.org/event/meatex-canada-2024
 https://machinesitalia.org/event/mecspe-2026
 https://machinesitalia.org/event/metalworking-manufacturing-expo-arrives-winnipeg-manitoba
 https://machinesitalia.org/event/metalworking-manufacturing-expo-langley-british-columbia
@@ -99,6 +94,7 @@ https://machinesitalia.org/event/plast-2026-international-exhibition-plastics-an
 https://machinesitalia.org/event/plastimagen-mexico-2025
 https://machinesitalia.org/event/print4all-2025
 https://machinesitalia.org/event/print4all-conference-2026
+https://machinesitalia.org/event/printing-united-expo-2026
 https://machinesitalia.org/event/promat-2025
 https://machinesitalia.org/event/ptxpo-2025
 https://machinesitalia.org/event/rapid-tct-2024
@@ -111,7 +107,6 @@ https://machinesitalia.org/event/sigep-2025
 https://machinesitalia.org/event/simac-tanning-tech-2024
 https://machinesitalia.org/event/simac-tanning-tech-2025
 https://machinesitalia.org/event/smart-technology-expo-2026
-https://machinesitalia.org/event/smartmtx-2024
 https://machinesitalia.org/event/tecna-2024
 https://machinesitalia.org/event/tecna-2026-international-exhibition-technologies-and-supplies-surfaces
 https://machinesitalia.org/event/tise-stone-expo-2025
@@ -124,14 +119,13 @@ https://machinesitalia.org/event/wms-2025-shaping-future-woodworking-canada
 https://machinesitalia.org/event/wmts-2025
 https://machinesitalia.org/event/world-ag-expo-2025
 https://machinesitalia.org/event/world-concrete-2025
-https://machinesitalia.org/event/xylexpo-2024
 https://machinesitalia.org/event/xylexpo-2026
 https://machinesitalia.org/event/zootecniche-connecting-industry-leaders-agro-zootechnology
 https://machinesitalia.org/news-article/anies-technology-days-etc-2026
 https://machinesitalia.org/news-article/importazioni-usa-di-macchinari-analisi-istituzionale-buone-notizie-litalia-nel-mercato
 https://machinesitalia.org/news-article/italia-si-conferma-secondo-fornitore-di-macchinari-limballaggio-messico
+https://machinesitalia.org/news-article/italian-hvac-manufacturer-aermec-invests-15-million-first-us-production-facility
 https://machinesitalia.org/news-article/italy-canada-growth-resilience-and-new-horizons-italian-industrial-technology
-https://machinesitalia.org/news-article/italy-consolidated-second-supplier-packaging-machinery-mexico
 https://machinesitalia.org/news-article/italys-2a-usa-expands-auburn-alabama-facility-32-million-investment
 https://machinesitalia.org/news-article/lamiera-presents-sound-innovation-applications-exhibit-excellent-start-new-edition
 https://machinesitalia.org/news-article/mexico-enters-top-10-worldwide-attracting-foreign-direct-investment
