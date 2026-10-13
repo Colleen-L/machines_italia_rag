@@ -18,6 +18,10 @@ on:
 permissions:
   contents: write
 
+concurrency:
+  group: machines-italia-discovery
+  cancel-in-progress: false
+
 jobs:
   discover:
     runs-on: ubuntu-latest
@@ -87,7 +91,11 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
           git commit -m "chore: update Machines Italia content state"
-          git push
+
+          git fetch origin main
+          git rebase origin/main
+
+          git push origin HEAD:main
 
       - name: Trigger n8n ingestion
         if: steps.changes.outputs.changed == 'true'
