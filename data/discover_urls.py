@@ -276,7 +276,7 @@ def main():
 
     unchanged_count = (len(current_urls) - len(changed_urls))
     print("Discovery summary", file=sys.stderr,)
-    print("---"file=sys.stderr,)
+    print("---", file=sys.stderr,)
     print(f"Current URLs:       {len(current_urls)}",file=sys.stderr,)
     print(f"New/changed URLs:   {len(changed_urls)}",file=sys.stderr,)
     print(f"Deleted URLs:       {len(deleted_urls)}",file=sys.stderr,)
