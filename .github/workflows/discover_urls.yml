@@ -90,23 +90,23 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-          # Get the latest main branch before committing generated state.
           git fetch origin main
           git reset --soft origin/main
 
-          # Re-stage the generated discovery files.
           git add \
             data/discovered_urls.txt \
             data/changed_urls.txt \
             data/deleted_urls.txt \
             data/page_hashes.json
 
-          # Commit the latest generated state.
-          git commit -m "chore: update Machines Italia content state"
+          if git diff --cached --quiet; then
+            echo "No changes to commit after syncing with origin/main."
+            exit 0
+          fi
 
-          # Push the generated state.
+          git commit -m "chore: update Machines Italia content state"
           git push origin HEAD:main
-          
+
       - name: Trigger n8n ingestion
         if: steps.changes.outputs.changed == 'true'
         env:
