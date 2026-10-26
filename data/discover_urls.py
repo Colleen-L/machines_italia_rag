@@ -18,6 +18,7 @@ import json
 import sys
 import time
 from pathlib import Path
+from urllib.parse import urlparse
 
 import requests
 from bs4 import BeautifulSoup
@@ -32,10 +33,29 @@ HEADERS = {
 }
 
 SEED_PAGES = [
+    # Core
+    "/",
+    "/about-us",
+    # Events
     "/events",
-    "/news",
     "/event-archives",
-] + [
+    # News
+    "/news",
+    # Sectors / industries
+    "/sectors",
+    # Knowledge / media
+    "/magazine",
+    "/videos",
+    "/publications",
+    # Universities / education
+    "/universities",
+    # Programs
+    "/italian-technology-awards",
+    # Other
+    "/connecting-canadian-manufacturers-italian-excellence",
+    "/contact-us",
+]
+SEED_PAGES += [
     f"/event-archives?page={i}"
     for i in range(1, 11)
 ]
@@ -48,7 +68,7 @@ DELETED_FILE = Path("data/deleted_urls.txt")
 REQUEST_TIMEOUT = 20
 
 SEED_DELAY = 1.0
-PAGE_DELAY = 0.5
+PAGE_DELAY = 1.5
 
 def fetch_page(url: str) -> requests.Response:
     """
@@ -62,27 +82,61 @@ def fetch_page(url: str) -> requests.Response:
     response.raise_for_status()
     return response
 
+EXCLUDED_PATHS = {
+    "/privacy-policy",
+    "/disclaimer",
+    "/newsletter-signup",
+}
+
+
 def find_links(html: str) -> set[str]:
     """
-    Extract Machines Italia event and news URLs.
+    Extract useful internal Machines Italia URLs.
     """
+
     soup = BeautifulSoup(html, "html.parser")
-
     found = set()
-
     for a in soup.find_all("a", href=True):
-
         href = a["href"].strip()
-
+        # ignore empty, fragment, mail, and JavaScript links
+        if not href:
+            continue
+        if href.startswith("#"):
+            continue
+        if href.startswith("mailto:"):
+            continue
+        if href.startswith("javascript:"):
+            continue
         # Convert relative URLs to absolute
         if href.startswith("/"):
             href = BASE + href
-
-        # Only keep supported content types
-        if href.startswith(BASE + "/event/"):
-            found.add(href)
-        elif href.startswith(BASE + "/news-article/"):
-            found.add(href)
+        # Only keep Machines Italia URLs
+        if not href.startswith(BASE):
+            continue
+        # Remove fragments
+        href = href.split("#")[0]
+        # Remove query strings except event archive pagination
+        if "?" in href and "/event-archives?page=" not in href:
+            href = href.split("?")[0]
+        path = urlparse(href).path.lower()
+        # Skip known non-content pages
+        if path in EXCLUDED_PATHS:
+            continue
+        # Skip files/assets
+        if path.endswith((
+            ".pdf",
+            ".jpg",
+            ".jpeg",
+            ".png",
+            ".gif",
+            ".svg",
+            ".webp",
+            ".mp4",
+            ".mov",
+            ".zip",
+        )):
+            continue
+        found.add(href)
     return found
 
 
@@ -94,10 +148,17 @@ def discover_urls() -> set[str]:
         print(f"Checking seed page: {url}",file=sys.stderr,flush=True,)
 
         try:
-            response = fetch_page(url)
-            links = find_links(response.text)
-            print(f"  Found {len(links)} content links",file=sys.stderr,flush=True,)
-            all_urls.update(links)
+          response = fetch_page(url)
+          # include the seed page itself
+          all_urls.add(url)
+          # discover additional internal pages
+          links = find_links(response.text)
+          print(
+              f"  Found {len(links)} content links",
+              file=sys.stderr,
+              flush=True,
+          )
+          all_urls.update(links)
         except Exception as exc:
             print(f"{exc}", file=sys.stderr,flush=True,)
             failed_seeds.append(url)
