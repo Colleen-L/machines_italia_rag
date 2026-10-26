@@ -30,7 +30,6 @@ https://machinesitalia.org/event/cersaie-2025-international-exhibition-ceramic-t
 https://machinesitalia.org/event/conexpo-conagg-2026
 https://machinesitalia.org/event/coverings-2025
 https://machinesitalia.org/event/coverings-2026
-https://machinesitalia.org/event/discover-cutting-edge-agricultural-machinery-join-italian-trade-commission-canadas-roadshow
 https://machinesitalia.org/event/discover-italian-technology-mining-industry-pdac-2026
 https://machinesitalia.org/event/discover-italian-technology-pdac-2025
 https://machinesitalia.org/event/ecomondo-2024-green-technology-expo
@@ -57,7 +56,6 @@ https://machinesitalia.org/event/focus-conference-humanoid-robot-forum-2025
 https://machinesitalia.org/event/formnext-chicago-2025
 https://machinesitalia.org/event/fundi-expo-2026
 https://machinesitalia.org/event/fundiexpo-2024
-https://machinesitalia.org/event/glass-technology-mexico-vidrios-y-aluminios
 https://machinesitalia.org/event/glassbuild-america-2026
 https://machinesitalia.org/event/glasstech-canada-2025
 https://machinesitalia.org/event/greenplast-2025
@@ -71,7 +69,6 @@ https://machinesitalia.org/event/international-mechanical-engineering-congress-e
 https://machinesitalia.org/event/ipack-ima-2025
 https://machinesitalia.org/event/ipack-ima-2028
 https://machinesitalia.org/event/italy-and-sardegna-web-summit-vancouver-2025
-https://machinesitalia.org/event/ivt-expo-highway-vehicle-technology-2024
 https://machinesitalia.org/event/iwf-international-woodworking-fair-2026
 https://machinesitalia.org/event/join-us-italian-night-imts-2026
 https://machinesitalia.org/event/lamiera-2025
@@ -90,6 +87,7 @@ https://machinesitalia.org/event/pack-expo-las-vegas-2025
 https://machinesitalia.org/event/packexpo-international-2024
 https://machinesitalia.org/event/pdac-2025
 https://machinesitalia.org/event/plast-2026-international-exhibition-plastics-and-rubber-industries
+https://machinesitalia.org/event/plast-2029-international-exhibition-plastics-and-rubber-industries
 https://machinesitalia.org/event/plastimagen-mexico-2025
 https://machinesitalia.org/event/print4all-2025
 https://machinesitalia.org/event/print4all-conference-2026
