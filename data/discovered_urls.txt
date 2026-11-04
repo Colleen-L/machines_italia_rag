@@ -111,12 +111,12 @@ https://machinesitalia.org/event/injection-molding-expo-2025
 https://machinesitalia.org/event/international-mechanical-engineering-congress-exposition-imece-2024
 https://machinesitalia.org/event/ipack-ima-2025
 https://machinesitalia.org/event/ipack-ima-2028
-https://machinesitalia.org/event/italian-trade-agency-and-ucimu-delegation-ohio-and-alabama-2017
 https://machinesitalia.org/event/italy-and-sardegna-web-summit-vancouver-2025
 https://machinesitalia.org/event/iwf-international-woodworking-fair-2026
 https://machinesitalia.org/event/join-us-italian-night-imts-2026
 https://machinesitalia.org/event/lamiera-2025
 https://machinesitalia.org/event/macfrut-2025
+https://machinesitalia.org/event/machines-italia-gold-level-partner-adm-montreal-2026
 https://machinesitalia.org/event/marmomac-2024
 https://machinesitalia.org/event/marmomac-2025
 https://machinesitalia.org/event/marmomac-2026
@@ -143,6 +143,7 @@ https://machinesitalia.org/event/robotics-2026-world-summit-and-expo-robotics-ai
 https://machinesitalia.org/event/robotics-summit-expo-2026
 https://machinesitalia.org/event/samoter-2026
 https://machinesitalia.org/event/sigep-2025
+https://machinesitalia.org/event/simac-tanning-tech-2022
 https://machinesitalia.org/event/simac-tanning-tech-2024
 https://machinesitalia.org/event/simac-tanning-tech-2025
 https://machinesitalia.org/event/smart-technology-expo-2026
