@@ -144,6 +144,7 @@
   "https://machinesitalia.org/event/robotics-summit-expo-2026": "54c01736e1acf6127c94c85c411692c5613f5a24f30cb9a406071626d1507169",
   "https://machinesitalia.org/event/samoter-2026": "ce98b3559b71ce2ef9882085a3d06d31d5cd397e071c42e8896c3be06e67f112",
   "https://machinesitalia.org/event/sigep-2025": "f31e1f775e7c4e54d6db917f1e7a4d1dbaea50ff2d5910df54fc0ea20f05df22",
+  "https://machinesitalia.org/event/simac-tanning-tech-2022": "c07ac3b2b88396651b9a025906fac101b2200e4c72b278455ff0eb7eaed25085",
   "https://machinesitalia.org/event/simac-tanning-tech-2024": "e9dcbe6a2283474f9d5601599339f117946207ade884994fca828078cb95e1ca",
   "https://machinesitalia.org/event/simac-tanning-tech-2025": "e5b93259427dbad1f7ac7cb83bceb07e796800a1019257195c05f1d25674718e",
   "https://machinesitalia.org/event/smart-technology-expo-2026": "8e754242aaf7812cd06773b7934972f87646b0ee492eadf88f8f3265f5469f38",
@@ -225,7 +226,6 @@
   "https://machinesitalia.org/news-article/italian-hvac-manufacturer-aermec-invests-15-million-first-us-production-facility": "61e8c83e44b004ef37c5f2bf4158e9cb7f230c02608fdacd6df259e9f06d30ee",
   "https://machinesitalia.org/news-article/italian-trade-agency-ucimu-fact-finding-tour-2017-ohio-and-alabama-video-online": "87e912d22774985c8d85c1b49ff1c2e5173ca586700efc6d6d7d49b667ec2262",
   "https://machinesitalia.org/news-article/italy-canada-growth-resilience-and-new-horizons-italian-industrial-technology": "d47a34f98c9f5f1346c17275e3ec6ccdce1a932e27fe09fc72bea09391cd025b",
-  "https://machinesitalia.org/news-article/italy-emtech-2015": "5aef2d8d900f483cdf0f490230bf6088a740a3774341cff8e6898fae062bcb35",
   "https://machinesitalia.org/news-article/italys-2a-usa-expands-auburn-alabama-facility-32-million-investment": "c17f1eeb9a5955a61cdd8ca0593ce5410f082b228e7e8cef1425ba6a488dd892",
   "https://machinesitalia.org/news-article/lamiera-presents-sound-innovation-applications-exhibit-excellent-start-new-edition": "174ead0241930a92d442116663901c0a1cce0f66b57b4954529e619ce47ec903",
   "https://machinesitalia.org/news-article/meet-vitrum-2021-where-glass-industry-comes-alive-next-edition-vitrum-revealed-ready": "20734e4ec372a4cb78eccfe806f94c30c68a1b7a466432406a1f270525f8cf97",
@@ -274,5 +274,5 @@
   "https://machinesitalia.org/university/university-parma-italy": "38afd1c334729ef66d444a9e34dd0154d6aa0637e158f04bd6fa18e973899cbe",
   "https://machinesitalia.org/user/login": "a5bda8a4abb8f52a8ee5972b111038e4c56e9a6fb927dd7534b3b792e4745e74",
   "https://machinesitalia.org/user/password": "c125da36184311bf920413abcde30294c927745a79c003f0c3075ea21def2dfa",
-  "https://machinesitalia.org/videos": "fe688ea347cff953a81f234240583d0d40acce7dfd1afe228b3f78926e4584c5"
+  "https://machinesitalia.org/videos": "5b714e3c60966ec6a66999e060245be2f8caf997436330bbdf61da75ba1e417d"
 }
