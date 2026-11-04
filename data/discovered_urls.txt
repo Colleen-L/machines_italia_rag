@@ -143,7 +143,6 @@ https://machinesitalia.org/event/robotics-2026-world-summit-and-expo-robotics-ai
 https://machinesitalia.org/event/robotics-summit-expo-2026
 https://machinesitalia.org/event/samoter-2026
 https://machinesitalia.org/event/sigep-2025
-https://machinesitalia.org/event/simac-tanning-tech-2022
 https://machinesitalia.org/event/simac-tanning-tech-2024
 https://machinesitalia.org/event/simac-tanning-tech-2025
 https://machinesitalia.org/event/smart-technology-expo-2026
@@ -225,6 +224,7 @@ https://machinesitalia.org/news-article/italia-si-conferma-secondo-fornitore-di-
 https://machinesitalia.org/news-article/italian-hvac-manufacturer-aermec-invests-15-million-first-us-production-facility
 https://machinesitalia.org/news-article/italian-trade-agency-ucimu-fact-finding-tour-2017-ohio-and-alabama-video-online
 https://machinesitalia.org/news-article/italy-canada-growth-resilience-and-new-horizons-italian-industrial-technology
+https://machinesitalia.org/news-article/italy-emtech-2015
 https://machinesitalia.org/news-article/italys-2a-usa-expands-auburn-alabama-facility-32-million-investment
 https://machinesitalia.org/news-article/lamiera-presents-sound-innovation-applications-exhibit-excellent-start-new-edition
 https://machinesitalia.org/news-article/meet-vitrum-2021-where-glass-industry-comes-alive-next-edition-vitrum-revealed-ready
